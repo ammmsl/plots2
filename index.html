@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance Cost Calculator TWD16XXGE </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+.requirements-box {
+            background: linear-gradient(135deg, #e8f2ff 0%, #cfe5ff 100%);
+            border-left: 4px solid #014FBC;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .collapsible-header:hover {
+            opacity: 0.8;
+        }
+        
+        .collapsible-toggle {
+            font-size: 1.5em;
+            color: #014FBC;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        
+        .collapsible-toggle.open {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.open {
+            max-height: 2000px;
+        }
+        
+        .service-description {
+            margin-top: 15px;
+        }
+        
+        .service-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .service-item h4 {
+            color: #014FBC;
+            margin-bottom: 8px;
+        }
+        
+        .service-item p {
+            color: #495057;
+            line-height: 1.6;
+            margin: 0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #014FBC 0%, #0367d6 50%, #025bb5 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #014FBC;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #014FBC;
+            margin: 30px 0 20px 0;
+        }
+        
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+        
+        input[type="number"] {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #014FBC;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #014FBC 0%, #0367d6 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            align-self: flex-end;
+            box-shadow: 0 4px 15px rgba(1, 79, 188, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(1, 79, 188, 0.4);
+        }
+        
+        .requirements-box {
+            background: linear-gradient(135deg, #e8f2ff 0%, #cfe5ff 100%);
+            border-left: 4px solid #014FBC;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .requirements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .requirement-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .requirement-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .requirement-value {
+            font-weight: 700;
+            color: #014FBC;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #014FBC 0%, #0367d6 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(1, 79, 188, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(1, 79, 188, 0.4);
+        }
+        
+        .card-title {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .card-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #014FBC 0%, #0367d6 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> VP TWD16XXGE Maintenance Cost Calculator</h1>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="hoursPerDay">Hours per Day:</label>
+                <input type="number" id="hoursPerDay" value="8" min="1" max="24" step="0.5">
+            </div>
+            <div class="control-group">
+                <label for="years">Years to Calculate:</label>
+                <input type="number" id="years" value="10" min="1" max="30">
+            </div>
+            <div class="control-group">
+                <button onclick="calculate()">Calculate Costs</button>
+            </div>
+        </div>
+        
+        <div class="requirements-box">
+            <div class="collapsible-header" onclick="toggleCollapsible('requirements')">
+                <h3 style="color: #014FBC; margin: 0;">Engine Requirements per Service</h3>
+                <span class="collapsible-toggle" id="requirements-toggle">▼</span>
+            </div>
+            <div class="collapsible-content" id="requirements-content">
+                <div class="requirements-grid" id="requirementsGrid"></div>
+            </div>
+        </div>
+        
+        <div class="requirements-box">
+            <div class="collapsible-header" onclick="toggleCollapsible('services')">
+                <h3 style="color: #014FBC; margin: 0;">Service Descriptions</h3>
+                <span class="collapsible-toggle" id="services-toggle">▼</span>
+            </div>
+            <div class="collapsible-content" id="services-content">
+                <div class="service-description">
+                    <div class="service-item">
+                        <h4>Service A - Oil & Filter Change</h4>
+                        <p><strong>Frequency:</strong> Every 500 hours OR 12 months (whichever comes first)</p>
+                        <p><strong>Actions:</strong> Inspect software status, coolant level & antifreeze mixture, drive belts, belt tensioner & idler wheels, and air filter. Replace engine oil and oil filters. Clean fuel pre-filter and drain water/contamination.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>Service B - Fuel & Air Filter Change</h4>
+                        <p><strong>Frequency:</strong> Every 1000 hours OR 12 months (whichever comes first)</p>
+                        <p><strong>Actions:</strong> Replace fuel pre-filter, fuel fine filter, and air filter.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>Service S or C1 - Valve Clearance</h4>
+                        <p><strong>Frequency:</strong> Every 1000 hours (S) or 2000 hours (C1)</p>
+                        <p><strong>Actions:</strong> Adjust valve clearance to maintain optimal engine performance.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>Service C2 - Drive Belt Replacement</h4>
+                        <p><strong>Frequency:</strong> Every 2000 hours OR 48 months (whichever comes first)</p>
+                        <p><strong>Actions:</strong> Replace drive belts. Inspect belt tensioner, belt pulley, and idler pulley bearings.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>Service F - Coolant Replacement</h4>
+                        <p><strong>Frequency:</strong> Every 8000 hours OR 48 months (whichever comes first)</p>
+                        <p><strong>Actions:</strong> Replace engine coolant to maintain proper cooling system performance.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>Service MKT1-8K - Belt Components Replacement</h4>
+                        <p><strong>Frequency:</strong> Every 8000 hours</p>
+                        <p><strong>Actions:</strong> Replace belt tensioners (1 & 2), belt pulley, and idler pulley bearings.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>Service MKT1-10K - Fan Hub Replacement</h4>
+                        <p><strong>Frequency:</strong> Every 10000 hours</p>
+                        <p><strong>Actions:</strong> Replace fan hub assembly.</p>
+                    </div>
+                    <div class="service-item">
+                        <h4>OVERHAUL - Complete Engine Overhaul</h4>
+                        <p><strong>Frequency:</strong> Every 25000 hours</p>
+                        <p><strong>Actions:</strong> Complete engine disassembly, inspection, and rebuild with replacement of all worn components.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="summary-cards" id="summaryCards"></div>
+        
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">Cumulative Cost Over Time</div>
+                <canvas id="cumulativeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Annual Cost Breakdown</div>
+                <canvas id="annualChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Cost Distribution by Service Type</div>
+                <canvas id="pieChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Maintenance Events Timeline</div>
+                <canvas id="timelineChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <h2>Detailed Maintenance Schedule</h2>
+            <table id="scheduleTable"></table>
+        </div>
+        
+        <div class="table-container">
+            <h2>Service Type Cost Summary</h2>
+            <table id="summaryTable"></table>
+        </div>
+    </div>
+
+    <script>
+        const parts = {
+            'Engine Oil 5L': 847.70,
+            'Engine Oil 20L': 1789.00,
+            'Engine Oil 208L': 17178.48,
+            'Oil Filter 1': 1310.27,
+            'Oil Filter 2': 1461.06,
+            'Fuel pre-filter': 902.21,
+            'Fuel fine filter': 759.33,
+            'Air Filter': 2991.49,
+            'Drive belt': 2109.77,
+            'Belt tensioner 1': 6986.80,
+            'Belt tensioner 2': 7079.34,
+            'Belt Pulley': 7622.60,
+            'Idler Pulley Bearings': 2830.92,
+            'Fan Hub': 12860.64,
+            'VCS-2 Coolant 20L': 3048.19,
+            'VCS-2 Coolant 5L': 757.06,
+            'Overhaul': 400000,
+            'Valve Clearance': 5000
+        };
+
+        const requiredQuantities = {
+            'Engine Oil': { qty: 48, unit: 'L' },
+            'Oil Filter 1': { qty: 1, unit: 'unit' },
+            'Oil Filter 2': { qty: 1, unit: 'unit' },
+            'Fuel pre-filter': { qty: 1, unit: 'unit' },
+            'Fuel fine filter': { qty: 1, unit: 'unit' },
+            'Air Filter': { qty: 2, unit: 'units' },
+            'Drive belt': { qty: 1, unit: 'unit' },
+            'Belt tensioner 1': { qty: 1, unit: 'unit' },
+            'Belt tensioner 2': { qty: 1, unit: 'unit' },
+            'Belt Pulley': { qty: 1, unit: 'unit' },
+            'Idler Pulley Bearings': { qty: 1, unit: 'unit' },
+            'Fan Hub': { qty: 1, unit: 'unit' },
+            'VCS-2 Coolant': { qty: 30.5, unit: 'L' }
+        };
+
+        let charts = {};
+
+        function toggleCollapsible(id) {
+            const content = document.getElementById(id + '-content');
+            const toggle = document.getElementById(id + '-toggle');
+            
+            content.classList.toggle('open');
+            toggle.classList.toggle('open');
+        }
+
+        function displayRequirements() {
+            const grid = document.getElementById('requirementsGrid');
+            let html = '';
+            
+            for (const [item, data] of Object.entries(requiredQuantities)) {
+                html += `
+                    <div class="requirement-item">
+                        <span class="requirement-label">${item}</span>
+                        <span class="requirement-value">${data.qty} ${data.unit}</span>
+                    </div>
+                `;
+            }
+            
+            grid.innerHTML = html;
+        }
+
+        function calculateOilCost(litersNeeded) {
+            const barrelOption = {
+                count: litersNeeded / 208,
+                cost: (litersNeeded / 208) * parts['Engine Oil 208L'],
+                detail: `${(litersNeeded / 208).toFixed(2)} x 208L Barrel`
+            };
+            
+            const container20LOption = {
+                count: litersNeeded / 20,
+                cost: (litersNeeded / 20) * parts['Engine Oil 20L'],
+                detail: `${(litersNeeded / 20).toFixed(2)} x 20L Container`
+            };
+            
+            const container5LOption = {
+                count: litersNeeded / 5,
+                cost: (litersNeeded / 5) * parts['Engine Oil 5L'],
+                detail: `${(litersNeeded / 5).toFixed(2)} x 5L Container`
+            };
+            
+            const options = [barrelOption, container20LOption, container5LOption];
+            const cheapest = options.reduce((min, opt) => opt.cost < min.cost ? opt : min);
+            
+            return { cost: cheapest.cost, detail: cheapest.detail };
+        }
+
+        function calculateCoolantCost(litersNeeded) {
+            const container20LOption = {
+                cost: (litersNeeded / 20) * parts['VCS-2 Coolant 20L'],
+                detail: `${(litersNeeded / 20).toFixed(2)} x 20L Container`
+            };
+            
+            const container5LOption = {
+                cost: (litersNeeded / 5) * parts['VCS-2 Coolant 5L'],
+                detail: `${(litersNeeded / 5).toFixed(2)} x 5L Container`
+            };
+            
+            return container20LOption.cost <= container5LOption.cost ? container20LOption : container5LOption;
+        }
+
+        function calculateMaintenanceSchedule(years, hoursPerDay) {
+            const daysPerYear = 365;
+            const hoursPerYear = hoursPerDay * daysPerYear;
+            const events = [];
+            
+            for (let year = 1; year <= years; year++) {
+                const yearStartHours = (year - 1) * hoursPerYear;
+                const yearEndHours = year * hoursPerYear;
+                
+                // Service A: Every 500 hours OR 12 months
+                const serviceACountHours = Math.floor(yearEndHours / 500) - Math.floor(yearStartHours / 500);
+                const serviceACount = Math.max(serviceACountHours, 1);
+                
+                for (let i = 0; i < serviceACount; i++) {
+                    const triggerHours = yearStartHours + (i + 1) * (yearEndHours - yearStartHours) / serviceACount;
+                    const oilResult = calculateOilCost(requiredQuantities['Engine Oil'].qty);
+                    const totalCost = oilResult.cost + 
+                                     parts['Oil Filter 1'] * requiredQuantities['Oil Filter 1'].qty + 
+                                     parts['Oil Filter 2'] * requiredQuantities['Oil Filter 2'].qty;
+                    
+                    events.push({
+                        year: year,
+                        service: 'A',
+                        description: 'Oil & Filter Change',
+                        hours: Math.round(triggerHours),
+                        parts: `Engine Oil (${oilResult.detail}), Oil Filter 1 (x${requiredQuantities['Oil Filter 1'].qty}), Oil Filter 2 (x${requiredQuantities['Oil Filter 2'].qty})`,
+                        cost: totalCost
+                    });
+                }
+                
+                // Service B: Every 1000 hours OR 12 months
+                const serviceBCountHours = Math.floor(yearEndHours / 1000) - Math.floor(yearStartHours / 1000);
+                const serviceBCount = Math.max(serviceBCountHours, 1);
+                
+                for (let i = 0; i < serviceBCount; i++) {
+                    const triggerHours = yearStartHours + (i + 1) * (yearEndHours - yearStartHours) / serviceBCount;
+                    const totalCost = parts['Fuel pre-filter'] * requiredQuantities['Fuel pre-filter'].qty + 
+                                     parts['Fuel fine filter'] * requiredQuantities['Fuel fine filter'].qty + 
+                                     parts['Air Filter'] * requiredQuantities['Air Filter'].qty;
+                    
+                    events.push({
+                        year: year,
+                        service: 'B',
+                        description: 'Fuel & Air Filter Change',
+                        hours: Math.round(triggerHours),
+                        parts: `Fuel pre-filter (x${requiredQuantities['Fuel pre-filter'].qty}), Fuel fine filter (x${requiredQuantities['Fuel fine filter'].qty}), Air Filter (x${requiredQuantities['Air Filter'].qty})`,
+                        cost: totalCost
+                    });
+                }
+                
+                // Service S: Every 1000 hours
+                // Service C1: Every 2000 hours
+                // Combine S and C1 to avoid duplicates (C1 occurs at 2000 hour intervals which overlap with S)
+                const serviceSCount = Math.floor(yearEndHours / 1000) - Math.floor(yearStartHours / 1000);
+                const serviceC1Count = Math.floor(yearEndHours / 2000) - Math.floor(yearStartHours / 2000);
+                
+                // Track which hours already have valve clearance scheduled
+                const valveClearanceHours = new Set();
+                
+                // Add C1 services first (every 2000 hours) - these take priority
+                for (let i = 0; i < serviceC1Count; i++) {
+                    const triggerHours = (Math.floor(yearStartHours / 2000) + i + 1) * 2000;
+                    if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
+                        valveClearanceHours.add(triggerHours);
+                        events.push({
+                            year: year,
+                            service: 'S or C1',
+                            description: 'Valve Clearance',
+                            hours: triggerHours,
+                            parts: 'Valve Clearance Service',
+                            cost: parts['Valve Clearance']
+                        });
+                    }
+                }
+                
+                // Add S services (every 1000 hours) only if not already covered by C1
+                for (let i = 0; i < serviceSCount; i++) {
+                    const triggerHours = (Math.floor(yearStartHours / 1000) + i + 1) * 1000;
+                    if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
+                        // Only add if this hour isn't already covered by C1
+                        if (!valveClearanceHours.has(triggerHours)) {
+                            events.push({
+                                year: year,
+                                service: 'S or C1',
+                                description: 'Valve Clearance',
+                                hours: triggerHours,
+                                parts: 'Valve Clearance Service',
+                                cost: parts['Valve Clearance']
+                            });
+                        }
+                    }
+                }
+                
+                // Service C2: Every 2000 hours OR 48 months
+                const serviceC2CountHours = Math.floor(yearEndHours / 2000) - Math.floor(yearStartHours / 2000);
+                const serviceC2CountMonths = (year % 4 === 0) ? 1 : 0;
+                
+                if (serviceC2CountHours > 0 || serviceC2CountMonths > 0) {
+                    const triggerHours = serviceC2CountHours > 0 ? 
+                        (Math.floor(yearStartHours / 2000) + 1) * 2000 : 
+                        Math.round(yearEndHours);
+                    const totalCost = parts['Drive belt'] * requiredQuantities['Drive belt'].qty;
+                    
+                    events.push({
+                        year: year,
+                        service: 'C2',
+                        description: 'Drive Belt Replacement',
+                        hours: triggerHours,
+                        parts: `Drive belt (x${requiredQuantities['Drive belt'].qty})`,
+                        cost: totalCost
+                    });
+                }
+                
+                // Service F: Every 8000 hours OR 48 months
+                const serviceFCountHours = Math.floor(yearEndHours / 8000) - Math.floor(yearStartHours / 8000);
+                const serviceFCountMonths = (year % 4 === 0) ? 1 : 0;
+                
+                if (serviceFCountHours > 0 || serviceFCountMonths > 0) {
+                    const triggerHours = serviceFCountHours > 0 ? 
+                        (Math.floor(yearStartHours / 8000) + 1) * 8000 : 
+                        Math.round(yearEndHours);
+                    const coolantResult = calculateCoolantCost(requiredQuantities['VCS-2 Coolant'].qty);
+                    
+                    events.push({
+                        year: year,
+                        service: 'F',
+                        description: 'Coolant Replacement',
+                        hours: triggerHours,
+                        parts: `VCS-2 Coolant (${coolantResult.detail})`,
+                        cost: coolantResult.cost
+                    });
+                }
+                
+                // MKT1 (8000 hours)
+                const mkt18kCount = Math.floor(yearEndHours / 8000) - Math.floor(yearStartHours / 8000);
+                for (let i = 0; i < mkt18kCount; i++) {
+                    const triggerHours = (Math.floor(yearStartHours / 8000) + i + 1) * 8000;
+                    if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
+                        const totalCost = parts['Belt tensioner 1'] * requiredQuantities['Belt tensioner 1'].qty + 
+                                         parts['Belt tensioner 2'] * requiredQuantities['Belt tensioner 2'].qty + 
+                                         parts['Belt Pulley'] * requiredQuantities['Belt Pulley'].qty + 
+                                         parts['Idler Pulley Bearings'] * requiredQuantities['Idler Pulley Bearings'].qty;
+                        
+                        events.push({
+                            year: year,
+                            service: 'MKT1-8K',
+                            description: 'Belt Components Replacement',
+                            hours: triggerHours,
+                            parts: `Belt tensioner 1 (x${requiredQuantities['Belt tensioner 1'].qty}), Belt tensioner 2 (x${requiredQuantities['Belt tensioner 2'].qty}), Belt Pulley (x${requiredQuantities['Belt Pulley'].qty}), Idler Pulley Bearings (x${requiredQuantities['Idler Pulley Bearings'].qty})`,
+                            cost: totalCost
+                        });
+                    }
+                }
+                
+                // MKT1 (10000 hours)
+                const mkt110kCount = Math.floor(yearEndHours / 10000) - Math.floor(yearStartHours / 10000);
+                for (let i = 0; i < mkt110kCount; i++) {
+                    const triggerHours = (Math.floor(yearStartHours / 10000) + i + 1) * 10000;
+                    if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
+                        const totalCost = parts['Fan Hub'] * requiredQuantities['Fan Hub'].qty;
+                        
+                        events.push({
+                            year: year,
+                            service: 'MKT1-10K',
+                            description: 'Fan Hub Replacement',
+                            hours: triggerHours,
+                            parts: `Fan Hub (x${requiredQuantities['Fan Hub'].qty})`,
+                            cost: totalCost
+                        });
+                    }
+                }
+                
+                // Overhaul: Every 25000 hours
+                const overhaulCount = Math.floor(yearEndHours / 25000) - Math.floor(yearStartHours / 25000);
+                for (let i = 0; i < overhaulCount; i++) {
+                    const triggerHours = (Math.floor(yearStartHours / 25000) + i + 1) * 25000;
+                    if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
+                        events.push({
+                            year: year,
+                            service: 'OVERHAUL',
+                            description: 'Complete Overhaul',
+                            hours: triggerHours,
+                            parts: 'Complete Overhaul',
+                            cost: parts['Overhaul']
+                        });
+                    }
+                }
+            }
+            
+            return { events, hoursPerYear };
+        }
+
+        function createSummaryCards(events, years, hoursPerYear) {
+            const totalCost = events.reduce((sum, e) => sum + e.cost, 0);
+            const avgAnnualCost = totalCost / years;
+            const totalHours = years * hoursPerYear;
+            const costPerHour = totalCost / totalHours;
+            
+            const cardsHTML = `
+                <div class="card">
+                    <div class="card-title">Total Lifetime Cost</div>
+                    <div class="card-value">MVR ${totalCost.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Average Annual Cost</div>
+                    <div class="card-value">MVR ${avgAnnualCost.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Cost per Hour</div>
+                    <div class="card-value">MVR ${costPerHour.toFixed(2)}</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Total Operating Hours</div>
+                    <div class="card-value">${totalHours.toLocaleString()}</div>
+                </div>
+            `;
+            
+            document.getElementById('summaryCards').innerHTML = cardsHTML;
+        }
+
+        function createCharts(events, years, hoursPerYear) {
+            Object.values(charts).forEach(chart => chart.destroy());
+            charts = {};
+            
+            const yearlyData = [];
+            const cumulativeData = [];
+            let cumulative = 0;
+            
+            for (let year = 1; year <= years; year++) {
+                const yearEvents = events.filter(e => e.year === year);
+                const yearCost = yearEvents.reduce((sum, e) => sum + e.cost, 0);
+                cumulative += yearCost;
+                
+                yearlyData.push(yearCost);
+                cumulativeData.push(cumulative);
+            }
+            
+            const serviceCosts = {};
+            events.forEach(e => {
+                serviceCosts[e.service] = (serviceCosts[e.service] || 0) + e.cost;
+            });
+            
+            charts.cumulative = new Chart(document.getElementById('cumulativeChart'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: years}, (_, i) => `Year ${i + 1}`),
+                    datasets: [{
+                        label: 'Cumulative Cost (MVR)',
+                        data: cumulativeData,
+                        borderColor: '#014FBC',
+                        backgroundColor: 'rgba(1, 79, 188, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'MVR ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            charts.annual = new Chart(document.getElementById('annualChart'), {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: years}, (_, i) => `Year ${i + 1}`),
+                    datasets: [{
+                        label: 'Annual Cost (MVR)',
+                        data: yearlyData,
+                        backgroundColor: 'rgba(1, 79, 188, 0.8)',
+                        borderColor: '#014FBC',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'MVR ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+			
+            const serviceDescriptions = {
+				'A': 'Oil & Filter Change',
+				'B': 'Fuel & Air Filter Change',
+				'S or C1': 'Valve Clearance',
+				'C2': 'Drive Belt Replacement',
+				'F': 'Coolant Replacement',
+				'MKT1-8K': 'Belt Components Replacement',
+				'MKT1-10K': 'Fan Hub Replacement',
+				'OVERHAUL': 'Complete Engine Overhaul'
+			};
+
+			
+			
+            const pieColors = ['#014FBC', '#0367d6', '#0c7ce6', '#3d92ea', '#5ca3ed', '#7db4f0', '#9ec5f3', '#bfd6f6'];
+            charts.pie = new Chart(document.getElementById('pieChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(serviceCosts),
+                    datasets: [{
+                        data: Object.values(serviceCosts),
+                        backgroundColor: pieColors.slice(0, Object.keys(serviceCosts).length)
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right' },
+						tooltip: {
+							callbacks: {
+								label: function(context) {
+									const label = context.label || '';
+									const value = context.parsed || 0;
+									const total = context.dataset.data.reduce((a, b) => a + b, 0);
+									const percentage = ((value / total) * 100).toFixed(1);
+									return `${label}: MVR ${value.toLocaleString()} (${percentage}%)`;
+								},
+								afterLabel: function(context) {
+									const label = context.label;
+									return serviceDescriptions[label] ? serviceDescriptions[label] : '';
+								}
+							}
+						}
+                    }
+                }
+            });
+            
+            const timelineData = events.map(e => ({
+                x: e.hours,
+                y: e.cost,
+                service: e.service
+            }));
+            
+            charts.timeline = new Chart(document.getElementById('timelineChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Maintenance Events',
+                        data: timelineData,
+                        backgroundColor: 'rgba(1, 79, 188, 0.6)',
+                        borderColor: '#014FBC',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.raw;
+                                    return [
+                                        `Service: ${point.service}`,
+                                        `Hours: ${point.x.toLocaleString()}`,
+                                        `Cost: MVR ${point.y.toLocaleString()}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Operating Hours' },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        },
+                        y: {
+                            title: { display: true, text: 'Cost (MVR)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'MVR ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTables(events, years, hoursPerYear) {
+            events.sort((a, b) => a.year - b.year || a.hours - b.hours);
+            
+            let scheduleHTML = `
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Service</th>
+                        <th>Description</th>
+                        <th>Hours</th>
+                        <th>Parts</th>
+                        <th>Cost (MVR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            
+            events.forEach(e => {
+                const highlight = e.service === 'OVERHAUL' ? 'class="highlight"' : '';
+                scheduleHTML += `
+                    <tr ${highlight}>
+                        <td>${e.year}</td>
+                        <td><strong>${e.service}</strong></td>
+                        <td>${e.description}</td>
+                        <td>${e.hours.toLocaleString()}</td>
+                        <td>${e.parts}</td>
+                        <td>${e.cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+            });
+            
+            scheduleHTML += '</tbody>';
+            document.getElementById('scheduleTable').innerHTML = scheduleHTML;
+            
+            const serviceSummary = {};
+            events.forEach(e => {
+                if (!serviceSummary[e.service]) {
+                    serviceSummary[e.service] = { total: 0, byYear: {} };
+                }
+                serviceSummary[e.service].total += e.cost;
+                serviceSummary[e.service].byYear[e.year] = 
+                    (serviceSummary[e.service].byYear[e.year] || 0) + e.cost;
+            });
+            
+            let summaryHTML = `<thead><tr><th>Service</th>`;
+            
+            for (let year = 1; year <= years; year++) {
+                summaryHTML += `<th>Year ${year}</th>`;
+            }
+            summaryHTML += `<th>Lifetime Total</th></tr></thead><tbody>`;
+            
+            Object.entries(serviceSummary).forEach(([service, data]) => {
+                summaryHTML += `<tr><td><strong>${service}</strong></td>`;
+                for (let year = 1; year <= years; year++) {
+                    const cost = data.byYear[year] || 0;
+                    summaryHTML += `<td>${cost > 0 ? cost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '-'}</td>`;
+                }
+                summaryHTML += `<td><strong>${data.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td></tr>`;
+            });
+            
+            summaryHTML += '</tbody>';
+            document.getElementById('summaryTable').innerHTML = summaryHTML;
+        }
+
+        function calculate() {
+            const hoursPerDay = parseFloat(document.getElementById('hoursPerDay').value);
+            const years = parseInt(document.getElementById('years').value);
+            
+            if (hoursPerDay <= 0 || years <= 0) {
+                alert('Please enter valid positive numbers');
+                return;
+            }
+            
+            const { events, hoursPerYear } = calculateMaintenanceSchedule(years, hoursPerDay);
+            
+            createSummaryCards(events, years, hoursPerYear);
+            createCharts(events, years, hoursPerYear);
+            createTables(events, years, hoursPerYear);
+        }
+
+        // Initialize on page load
+        displayRequirements();
+        calculate();
+    </script>
+</body>
+</html>
