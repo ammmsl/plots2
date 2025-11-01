@@ -135,6 +135,18 @@
             outline: none;
             border-color: #014FBC;
         }
+
+        input[type="range"] {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
         
         button {
             background: linear-gradient(135deg, #014FBC 0%, #0367d6 100%);
@@ -303,6 +315,17 @@
                 <input type="number" id="years" value="10" min="1" max="30">
             </div>
             <div class="control-group">
+                <label>
+                    <input type="checkbox" id="enableInflation" onchange="toggleInflationControls(); calculate()"> 
+                    Apply Inflation Adjustment
+                </label>
+            </div>
+            <div class="control-group" id="inflationRateControl" style="display: none;">
+                <label for="inflationRate">Annual Inflation Rate: <span id="inflationDisplay">3.0%</span></label>
+                <input type="range" id="inflationRate" min="0" max="15" step="0.5" value="3" 
+                       oninput="updateInflationDisplay()" onchange="calculate()">
+            </div>
+            <div class="control-group">
                 <button onclick="calculate()">Calculate Costs</button>
             </div>
         </div>
@@ -398,6 +421,18 @@
             <h2>Service Type Cost Summary</h2>
             <table id="summaryTable"></table>
         </div>
+
+        <div class="requirements-box" id="comparisonTableContainer" style="display: none;">
+            <div class="collapsible-header" onclick="toggleCollapsible('comparison')">
+                <h3 style="color: #014FBC; margin: 0;">Inflation Impact Comparison</h3>
+                <span class="collapsible-toggle" id="comparison-toggle">▼</span>
+            </div>
+            <div class="collapsible-content" id="comparison-content">
+                <div class="table-container">
+                    <table id="comparisonTable"></table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -439,6 +474,21 @@
         };
 
         let charts = {};
+
+        function toggleInflationControls() {
+            const enabled = document.getElementById('enableInflation').checked;
+            document.getElementById('inflationRateControl').style.display = enabled ? 'flex' : 'none';
+        }
+
+        function updateInflationDisplay() {
+            const rate = document.getElementById('inflationRate').value;
+            document.getElementById('inflationDisplay').textContent = rate + '%';
+        }
+
+        function applyInflation(baseCost, year, inflationRate, enabled) {
+            if (!enabled) return baseCost;
+            return baseCost * Math.pow(1 + (inflationRate / 100), year - 1);
+        }
 
         function toggleCollapsible(id) {
             const content = document.getElementById(id + '-content');
@@ -508,6 +558,9 @@
             const hoursPerYear = hoursPerDay * daysPerYear;
             const events = [];
             
+            const inflationEnabled = document.getElementById('enableInflation').checked;
+            const inflationRate = parseFloat(document.getElementById('inflationRate').value);
+            
             for (let year = 1; year <= years; year++) {
                 const yearStartHours = (year - 1) * hoursPerYear;
                 const yearEndHours = year * hoursPerYear;
@@ -519,9 +572,11 @@
                 for (let i = 0; i < serviceACount; i++) {
                     const triggerHours = yearStartHours + (i + 1) * (yearEndHours - yearStartHours) / serviceACount;
                     const oilResult = calculateOilCost(requiredQuantities['Engine Oil'].qty);
-                    const totalCost = oilResult.cost + 
+                    const baseCost = oilResult.cost + 
                                      parts['Oil Filter 1'] * requiredQuantities['Oil Filter 1'].qty + 
                                      parts['Oil Filter 2'] * requiredQuantities['Oil Filter 2'].qty;
+                    
+                    const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
                     
                     events.push({
                         year: year,
@@ -529,7 +584,8 @@
                         description: 'Oil & Filter Change',
                         hours: Math.round(triggerHours),
                         parts: `Engine Oil (${oilResult.detail}), Oil Filter 1 (x${requiredQuantities['Oil Filter 1'].qty}), Oil Filter 2 (x${requiredQuantities['Oil Filter 2'].qty})`,
-                        cost: totalCost
+                        cost: finalCost,
+                        baseCost: baseCost
                     });
                 }
                 
@@ -539,9 +595,11 @@
                 
                 for (let i = 0; i < serviceBCount; i++) {
                     const triggerHours = yearStartHours + (i + 1) * (yearEndHours - yearStartHours) / serviceBCount;
-                    const totalCost = parts['Fuel pre-filter'] * requiredQuantities['Fuel pre-filter'].qty + 
+                    const baseCost = parts['Fuel pre-filter'] * requiredQuantities['Fuel pre-filter'].qty + 
                                      parts['Fuel fine filter'] * requiredQuantities['Fuel fine filter'].qty + 
                                      parts['Air Filter'] * requiredQuantities['Air Filter'].qty;
+                    
+                    const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
                     
                     events.push({
                         year: year,
@@ -549,31 +607,34 @@
                         description: 'Fuel & Air Filter Change',
                         hours: Math.round(triggerHours),
                         parts: `Fuel pre-filter (x${requiredQuantities['Fuel pre-filter'].qty}), Fuel fine filter (x${requiredQuantities['Fuel fine filter'].qty}), Air Filter (x${requiredQuantities['Air Filter'].qty})`,
-                        cost: totalCost
+                        cost: finalCost,
+                        baseCost: baseCost
                     });
                 }
                 
                 // Service S: Every 1000 hours
                 // Service C1: Every 2000 hours
-                // Combine S and C1 to avoid duplicates (C1 occurs at 2000 hour intervals which overlap with S)
                 const serviceSCount = Math.floor(yearEndHours / 1000) - Math.floor(yearStartHours / 1000);
                 const serviceC1Count = Math.floor(yearEndHours / 2000) - Math.floor(yearStartHours / 2000);
                 
-                // Track which hours already have valve clearance scheduled
                 const valveClearanceHours = new Set();
                 
-                // Add C1 services first (every 2000 hours) - these take priority
+                // Add C1 services first (every 2000 hours)
                 for (let i = 0; i < serviceC1Count; i++) {
                     const triggerHours = (Math.floor(yearStartHours / 2000) + i + 1) * 2000;
                     if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
                         valveClearanceHours.add(triggerHours);
+                        const baseCost = parts['Valve Clearance'];
+                        const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
+                        
                         events.push({
                             year: year,
                             service: 'S or C1',
                             description: 'Valve Clearance',
                             hours: triggerHours,
                             parts: 'Valve Clearance Service',
-                            cost: parts['Valve Clearance']
+                            cost: finalCost,
+                            baseCost: baseCost
                         });
                     }
                 }
@@ -582,15 +643,18 @@
                 for (let i = 0; i < serviceSCount; i++) {
                     const triggerHours = (Math.floor(yearStartHours / 1000) + i + 1) * 1000;
                     if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
-                        // Only add if this hour isn't already covered by C1
                         if (!valveClearanceHours.has(triggerHours)) {
+                            const baseCost = parts['Valve Clearance'];
+                            const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
+                            
                             events.push({
                                 year: year,
                                 service: 'S or C1',
                                 description: 'Valve Clearance',
                                 hours: triggerHours,
                                 parts: 'Valve Clearance Service',
-                                cost: parts['Valve Clearance']
+                                cost: finalCost,
+                                baseCost: baseCost
                             });
                         }
                     }
@@ -604,7 +668,8 @@
                     const triggerHours = serviceC2CountHours > 0 ? 
                         (Math.floor(yearStartHours / 2000) + 1) * 2000 : 
                         Math.round(yearEndHours);
-                    const totalCost = parts['Drive belt'] * requiredQuantities['Drive belt'].qty;
+                    const baseCost = parts['Drive belt'] * requiredQuantities['Drive belt'].qty;
+                    const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
                     
                     events.push({
                         year: year,
@@ -612,7 +677,8 @@
                         description: 'Drive Belt Replacement',
                         hours: triggerHours,
                         parts: `Drive belt (x${requiredQuantities['Drive belt'].qty})`,
-                        cost: totalCost
+                        cost: finalCost,
+                        baseCost: baseCost
                     });
                 }
                 
@@ -625,6 +691,8 @@
                         (Math.floor(yearStartHours / 8000) + 1) * 8000 : 
                         Math.round(yearEndHours);
                     const coolantResult = calculateCoolantCost(requiredQuantities['VCS-2 Coolant'].qty);
+                    const baseCost = coolantResult.cost;
+                    const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
                     
                     events.push({
                         year: year,
@@ -632,7 +700,8 @@
                         description: 'Coolant Replacement',
                         hours: triggerHours,
                         parts: `VCS-2 Coolant (${coolantResult.detail})`,
-                        cost: coolantResult.cost
+                        cost: finalCost,
+                        baseCost: baseCost
                     });
                 }
                 
@@ -641,10 +710,12 @@
                 for (let i = 0; i < mkt18kCount; i++) {
                     const triggerHours = (Math.floor(yearStartHours / 8000) + i + 1) * 8000;
                     if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
-                        const totalCost = parts['Belt tensioner 1'] * requiredQuantities['Belt tensioner 1'].qty + 
+                        const baseCost = parts['Belt tensioner 1'] * requiredQuantities['Belt tensioner 1'].qty + 
                                          parts['Belt tensioner 2'] * requiredQuantities['Belt tensioner 2'].qty + 
                                          parts['Belt Pulley'] * requiredQuantities['Belt Pulley'].qty + 
                                          parts['Idler Pulley Bearings'] * requiredQuantities['Idler Pulley Bearings'].qty;
+                        
+                        const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
                         
                         events.push({
                             year: year,
@@ -652,7 +723,8 @@
                             description: 'Belt Components Replacement',
                             hours: triggerHours,
                             parts: `Belt tensioner 1 (x${requiredQuantities['Belt tensioner 1'].qty}), Belt tensioner 2 (x${requiredQuantities['Belt tensioner 2'].qty}), Belt Pulley (x${requiredQuantities['Belt Pulley'].qty}), Idler Pulley Bearings (x${requiredQuantities['Idler Pulley Bearings'].qty})`,
-                            cost: totalCost
+                            cost: finalCost,
+                            baseCost: baseCost
                         });
                     }
                 }
@@ -662,7 +734,8 @@
                 for (let i = 0; i < mkt110kCount; i++) {
                     const triggerHours = (Math.floor(yearStartHours / 10000) + i + 1) * 10000;
                     if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
-                        const totalCost = parts['Fan Hub'] * requiredQuantities['Fan Hub'].qty;
+                        const baseCost = parts['Fan Hub'] * requiredQuantities['Fan Hub'].qty;
+                        const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
                         
                         events.push({
                             year: year,
@@ -670,7 +743,8 @@
                             description: 'Fan Hub Replacement',
                             hours: triggerHours,
                             parts: `Fan Hub (x${requiredQuantities['Fan Hub'].qty})`,
-                            cost: totalCost
+                            cost: finalCost,
+                            baseCost: baseCost
                         });
                     }
                 }
@@ -680,13 +754,17 @@
                 for (let i = 0; i < overhaulCount; i++) {
                     const triggerHours = (Math.floor(yearStartHours / 25000) + i + 1) * 25000;
                     if (yearStartHours < triggerHours && triggerHours <= yearEndHours) {
+                        const baseCost = parts['Overhaul'];
+                        const finalCost = applyInflation(baseCost, year, inflationRate, inflationEnabled);
+                        
                         events.push({
                             year: year,
                             service: 'OVERHAUL',
                             description: 'Complete Overhaul',
                             hours: triggerHours,
                             parts: 'Complete Overhaul',
-                            cost: parts['Overhaul']
+                            cost: finalCost,
+                            baseCost: baseCost
                         });
                     }
                 }
@@ -696,14 +774,29 @@
         }
 
         function createSummaryCards(events, years, hoursPerYear) {
+            const inflationEnabled = document.getElementById('enableInflation').checked;
             const totalCost = events.reduce((sum, e) => sum + e.cost, 0);
             const avgAnnualCost = totalCost / years;
             const totalHours = years * hoursPerYear;
             const costPerHour = totalCost / totalHours;
             
+            let inflationImpact = '';
+            if (inflationEnabled) {
+                const baseTotalCost = events.reduce((sum, e) => sum + (e.baseCost || e.cost), 0);
+                const difference = totalCost - baseTotalCost;
+                const percentIncrease = ((difference / baseTotalCost) * 100).toFixed(1);
+                inflationImpact = `
+                    <div class="card" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);">
+                        <div class="card-title">Inflation Impact</div>
+                        <div class="card-value">+MVR ${difference.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
+                        <div style="font-size: 0.9em; margin-top: 5px; opacity: 0.9;">+${percentIncrease}% over base cost</div>
+                    </div>
+                `;
+            }
+            
             const cardsHTML = `
                 <div class="card">
-                    <div class="card-title">Total Lifetime Cost</div>
+                    <div class="card-title">Total Lifetime Cost${inflationEnabled ? ' (Inflated)' : ''}</div>
                     <div class="card-value">MVR ${totalCost.toLocaleString(undefined, {maximumFractionDigits: 0})}</div>
                 </div>
                 <div class="card">
@@ -718,13 +811,93 @@
                     <div class="card-title">Total Operating Hours</div>
                     <div class="card-value">${totalHours.toLocaleString()}</div>
                 </div>
+                ${inflationImpact}
             `;
             
             document.getElementById('summaryCards').innerHTML = cardsHTML;
         }
 
+        function createComparisonTable(events, years) {
+            const inflationEnabled = document.getElementById('enableInflation').checked;
+            const container = document.getElementById('comparisonTableContainer');
+            
+            if (!inflationEnabled) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            
+            const yearlyComparison = {};
+            
+            for (let year = 1; year <= years; year++) {
+                const yearEvents = events.filter(e => e.year === year);
+                const inflatedTotal = yearEvents.reduce((sum, e) => sum + e.cost, 0);
+                const baseTotal = yearEvents.reduce((sum, e) => sum + (e.baseCost || e.cost), 0);
+                
+                yearlyComparison[year] = {
+                    base: baseTotal,
+                    inflated: inflatedTotal,
+                    difference: inflatedTotal - baseTotal
+                };
+            }
+            
+            let comparisonHTML = `
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Base Cost (MVR)</th>
+                        <th>Inflated Cost (MVR)</th>
+                        <th>Additional Cost (MVR)</th>
+                        <th>Increase (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+            `;
+            
+            let totalBase = 0;
+            let totalInflated = 0;
+            
+            for (let year = 1; year <= years; year++) {
+                const data = yearlyComparison[year];
+                totalBase += data.base;
+                totalInflated += data.inflated;
+                const percentIncrease = data.base > 0 ? ((data.difference / data.base) * 100).toFixed(1) : '0.0';
+                
+                comparisonHTML += `
+                    <tr>
+                        <td><strong>Year ${year}</strong></td>
+                        <td>${data.base.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${data.inflated.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td style="color: #dc3545; font-weight: 600;">+${data.difference.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>+${percentIncrease}%</td>
+                    </tr>
+                `;
+            }
+            
+            const totalDifference = totalInflated - totalBase;
+            const totalPercentIncrease = ((totalDifference / totalBase) * 100).toFixed(1);
+            
+            comparisonHTML += `
+                <tr style="background: #f8f9fa; font-weight: bold;">
+                    <td>TOTAL</td>
+                    <td>${totalBase.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${totalInflated.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="color: #dc3545;">+${totalDifference.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>+${totalPercentIncrease}%</td>
+                </tr>
+            `;
+            
+            comparisonHTML += '</tbody>';
+            document.getElementById('comparisonTable').innerHTML = comparisonHTML;
+        }
+
         function createCharts(events, years, hoursPerYear) {
-            Object.values(charts).forEach(chart => chart.destroy());
+            // Destroy existing charts safely
+            if (charts.cumulative) charts.cumulative.destroy();
+            if (charts.annual) charts.annual.destroy();
+            if (charts.pie) charts.pie.destroy();
+            if (charts.timeline) charts.timeline.destroy();
             charts = {};
             
             const yearlyData = [];
@@ -802,20 +975,18 @@
                     }
                 }
             });
-			
+            
             const serviceDescriptions = {
-				'A': 'Oil & Filter Change',
-				'B': 'Fuel & Air Filter Change',
-				'S or C1': 'Valve Clearance',
-				'C2': 'Drive Belt Replacement',
-				'F': 'Coolant Replacement',
-				'MKT1-8K': 'Belt Components Replacement',
-				'MKT1-10K': 'Fan Hub Replacement',
-				'OVERHAUL': 'Complete Engine Overhaul'
-			};
-
-			
-			
+                'A': 'Oil & Filter Change',
+                'B': 'Fuel & Air Filter Change',
+                'S or C1': 'Valve Clearance',
+                'C2': 'Drive Belt Replacement',
+                'F': 'Coolant Replacement',
+                'MKT1-8K': 'Belt Components Replacement',
+                'MKT1-10K': 'Fan Hub Replacement',
+                'OVERHAUL': 'Complete Engine Overhaul'
+            };
+            
             const pieColors = ['#014FBC', '#0367d6', '#0c7ce6', '#3d92ea', '#5ca3ed', '#7db4f0', '#9ec5f3', '#bfd6f6'];
             charts.pie = new Chart(document.getElementById('pieChart'), {
                 type: 'doughnut',
@@ -830,21 +1001,21 @@
                     responsive: true,
                     plugins: {
                         legend: { position: 'right' },
-						tooltip: {
-							callbacks: {
-								label: function(context) {
-									const label = context.label || '';
-									const value = context.parsed || 0;
-									const total = context.dataset.data.reduce((a, b) => a + b, 0);
-									const percentage = ((value / total) * 100).toFixed(1);
-									return `${label}: MVR ${value.toLocaleString()} (${percentage}%)`;
-								},
-								afterLabel: function(context) {
-									const label = context.label;
-									return serviceDescriptions[label] ? serviceDescriptions[label] : '';
-								}
-							}
-						}
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: MVR ${value.toLocaleString()} (${percentage}%)`;
+                                },
+                                afterLabel: function(context) {
+                                    const label = context.label;
+                                    return serviceDescriptions[label] ? serviceDescriptions[label] : '';
+                                }
+                            }
+                        }
                     }
                 }
             });
@@ -984,6 +1155,7 @@
             createSummaryCards(events, years, hoursPerYear);
             createCharts(events, years, hoursPerYear);
             createTables(events, years, hoursPerYear);
+            createComparisonTable(events, years);
         }
 
         // Initialize on page load
