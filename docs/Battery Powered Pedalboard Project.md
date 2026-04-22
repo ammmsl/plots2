@@ -12,13 +12,13 @@ The following tables exclude the Sheeran Looper as it is already in inventory. A
 
 This is the recommended route to minimize shipping costs to the Maldives.
 
-| Component                                                                                                 | [Version 1 (GP-5)](https://www.google.com/search?q=%23valeton-gp-5 "null") | [Version 2 (GP-50)](https://www.google.com/search?q=%23valeton-gp-50 "null") | Shipping Source           |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------- |
-| Valeton Multi-FX                                                                                          | $83.24 (RM 329)                                                            | $126.25 (RM 499)                                                             | $9.00 (Lazada Forwarding) |
-| [Power Converters (2x)](https://www.google.com/search?q=%23generic-usb-to-9v-converter-aliexpress "null") | $13.52                                                                     | $13.52                                                                       | Free (AliExpress)         |
-| [Ghostfire SPL-01](https://www.google.com/search?q=%23ghostfire-spl-01 "null")                            | $32.99                                                                     | $32.99                                                                       | $23.64 (Amazon)           |
-| [Generic Powerbank](https://www.google.com/search?q=%23generic-powerbank "null")                          | $35.00                                                                     | $35.00                                                                       | Local Purchase            |
-| **Total w/ Shipping**                                                                                     | **$197.39**                                                                | **$240.40**                                                                  | **Total Ship: $32.64**    |
+| Component | [Version 1 (GP-5)](https://www.google.com/search?q=%23valeton-gp-5 "null") | [Version 2 (GP-50)](https://www.google.com/search?q=%23valeton-gp-50 "null") | Shipping Source|
+| --------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------- | ------------------------- |
+| Valeton Multi-FX| $83.24 (RM 329)| $126.25 (RM 499)   | $9.00 (Lazada Forwarding) |
+| [Power Converters (2x)](https://www.google.com/search?q=%23generic-usb-to-9v-converter-aliexpress "null") | $13.52 | $13.52                                                                       | Free (AliExpress)|
+| [Ghostfire SPL-01](https://www.google.com/search?q=%23ghostfire-spl-01 "null")    | $32.99            | $32.99     | $23.64 (Amazon)           |
+| [Generic Powerbank](https://www.google.com/search?q=%23generic-powerbank "null")     | $35.00             | $35.00      | Local Purchase            |
+| **Total w/ Shipping**     | **$197.39**     | **$240.40**       | **Total Ship: $32.64**    |
 
 ### Comparison: Thomann Direct Build
 
