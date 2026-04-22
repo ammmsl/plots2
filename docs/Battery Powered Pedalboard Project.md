@@ -12,13 +12,13 @@ The following tables exclude the Sheeran Looper as it is already in inventory. A
 
 This is the recommended route to minimize shipping costs to the Maldives.
 
-| Component | [Version 1 (GP-5)](https://www.google.com/search?q=%23valeton-gp-5 "null") | [Version 2 (GP-50)](https://www.google.com/search?q=%23valeton-gp-50 "null") | Shipping Source|
-| --------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------- | ------------------------- |
-| Valeton Multi-FX| $83.24 (RM 329)| $126.25 (RM 499)   | $9.00 (Lazada Forwarding) |
-| [Power Converters (2x)](https://www.google.com/search?q=%23generic-usb-to-9v-converter-aliexpress "null") | $13.52 | $13.52                                                                       | Free (AliExpress)|
-| [Ghostfire SPL-01](https://www.google.com/search?q=%23ghostfire-spl-01 "null")    | $32.99            | $32.99     | $23.64 (Amazon)           |
-| [Generic Powerbank](https://www.google.com/search?q=%23generic-powerbank "null")     | $35.00             | $35.00      | Local Purchase            |
-| **Total w/ Shipping**     | **$197.39**     | **$240.40**       | **Total Ship: $32.64**    |
+| Component                                                                                                   | [Version 1 (GP-5)](https://www.google.com/search?q=%23valeton-gp-5 "null") | [Version 2 (GP-50)](https://www.google.com/search?q=%23valeton-gp-50 "null") | Shipping Source           |
+| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------- | ------------------------- |
+| Valeton Multi-FX                                                                                            | &#36;83.24 (RM 329)                                                            | &#36;126.25 (RM 499)                                                             | &#36;9.00 (Lazada Forwarding) |
+| [Power Converters (2x)](https://www.google.com/search?q=%23generic-usb-to-9v-converter-aliexpress "null") | &#36;13.52                                                                     | &#36;13.52                                                                       | Free (AliExpress)         |
+| [Ghostfire SPL-01](https://www.google.com/search?q=%23ghostfire-spl-01 "null")                            | &#36;32.99                                                                     | &#36;32.99                                                                       | &#36;23.64 (Amazon)           |
+| [Generic Powerbank](https://www.google.com/search?q=%23generic-powerbank "null")                          | &#36;35.00                                                                     | &#36;35.00                                                                       | Local Purchase            |
+| **Total w/ Shipping** | **&#36;197.39** | **&#36;240.40** | **Total Ship: &#36;32.64** |
 
 ### Comparison: Thomann Direct Build
 
@@ -26,10 +26,9 @@ High-reliability components but significant shipping overhead.
 
 | Component                                                                                               | V1 (GP-5)   | V2 (GP-50)  | Shipping                |
 | ------------------------------------------------------------------------------------------------------- | ----------- | ----------- | ----------------------- |
-| Valeton + [Boston USB Converters](https://www.google.com/search?q=%23boston-usb-to-9v-converter "null") | $97.47      | $136.50     | $82.00                  |
-| [Ghostfire SPL-01](https://www.google.com/search?q=%23ghostfire-spl-01 "null")                          | $32.99      | $32.99      | $23.64                  |
-| **Total w/ Shipping**                                                                                   | **$271.10** | **$310.13** | **Total Ship: $105.64** |
-
+| Valeton + [Boston USB Converters](https://www.google.com/search?q=%23boston-usb-to-9v-converter "null") | &#36;97.47      | &#36;136.50     | &#36;82.00                  |
+| [Ghostfire SPL-01](https://www.google.com/search?q=%23ghostfire-spl-01 "null")                          | &#36;32.99      | &#36;32.99      | &#36;23.64                  |
+| **Total w/ Shipping** | **&#36;271.10** | **&#36;310.13** | **Total Ship: &#36;105.64** |
 ## Technical Specifications
 
 ### Weight Variance
