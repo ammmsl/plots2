@@ -3,14 +3,13 @@ The following tables break down the estimated costs for sourcing a 3-channel das
 ### Base System Build (Shopee MY + Lazada MY)
 This is the recommended route to minimize shipping costs and time by ordering domestically within Malaysia. **Note:** A High-Endurance MicroSD card and Hardwire Kit are required for all builds if utilizing 24-hour parking modes.
 
-|   |   |   |   |   |   |   |   |
-|---|---|---|---|---|---|---|---|
-|**Component**|**AZDOME (USD)**|**AZDOME (RM)**|**REDTIGER (USD)**|**REDTIGER (RM)**|**VIOFO (USD)**|**VIOFO (RM)**|**Shipping Source**|
-|**Main 3CH Dashcam**|~$105.00|~RM 499|~$140.00|~RM 665|~$180.00|~RM 855|Shopee MY / Lazada MY|
-|**Hardwire Kit** (Type-C / Mini-USB)|~$10.00|~RM 48|~$15.00|~RM 71|~$19.00|~RM 90|Shopee MY / Lazada MY|
-|**High-Endurance MicroSD** (128GB)|~$20.00|~RM 95|~$20.00|~RM 95|~$20.00|~RM 95|Shopee MY / Local|
-|**Est. Local Shipping**|~$3.00|~RM 15|~$3.00|~RM 15|~$3.00|~RM 15|Domestic Courier|
-|**Total Estimated Cost**|**$138.00**|**RM 657**|**$178.00**|**RM 846**|**$222.00**|**RM 1055**||
+| **Component**                        | **AZDOME (USD)** | **AZDOME (RM)** | **REDTIGER (USD)** | **REDTIGER (RM)** | **VIOFO (USD)** | **VIOFO (RM)** | **Shipping Source**   |
+| ------------------------------------ | ---------------- | --------------- | ------------------ | ----------------- | --------------- | -------------- | --------------------- |
+| **Main 3CH Dashcam**                 | ~$105.00         | ~RM 499         | ~$140.00           | ~RM 665           | ~$180.00        | ~RM 855        | Shopee MY / Lazada MY |
+| **Hardwire Kit** (Type-C / Mini-USB) | ~$10.00          | ~RM 48          | ~$15.00            | ~RM 71            | ~$19.00         | ~RM 90         | Shopee MY / Lazada MY |
+| **High-Endurance MicroSD** (128GB)   | ~$20.00          | ~RM 95          | ~$20.00            | ~RM 95            | ~$20.00         | ~RM 95         | Shopee MY / Local     |
+| **Est. Local Shipping**              | ~$3.00           | ~RM 15          | ~$3.00             | ~RM 15            | ~$3.00          | ~RM 15         | Domestic Courier      |
+| **Total Estimated Cost**             | **$138.00**      | **RM 657**      | **$178.00**        | **RM 846**        | **$222.00**     | **RM 1055**    |                       |
 
 ## Component Directories
 ### Dashcam Options
